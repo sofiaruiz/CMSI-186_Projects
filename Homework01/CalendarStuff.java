@@ -36,7 +36,7 @@ public class CalendarStuff {
 	  /**
 	   * The constructor for the class
 	   */
-	   public CalendarStuffEmpty() {
+	   public CalendarStuff() {
 	      System.out.println( "Constructor called..." );  // replace this with the actual code
 	   }
 
