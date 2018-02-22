@@ -97,29 +97,6 @@ public class DiceSet {
 	   * A little test main to check things out
 	   */
 	   public static void main( String[] args ) {
-	          DiceSet d = new DiceSet(6, 6);
-	          System.out.println("rolling all die:" + d.rollAll());
-		  System.out.println("rolling third die:" + d.rollIndividual(3));
-		  System.out.println("sum of the all die:" + d.sum());
-
-		  DiceSet d1 = new DiceSet(4, 4);
-	          System.out.println("rolling all die:" + d.rollAll());
-		  System.out.println("rolling third die:" + d.rollIndividual(3));
-		  System.out.println("sum of the all die:" + d.sum());
-
-		  DiceSet d2 = new DiceSet(12, 5);
-	          System.out.println("rolling all die:" + d.rollAll());
-		  System.out.println("rolling second die:" + d.rollIndividual(2));
-		  System.out.println("sum of the all die:" + d.sum());
-
-		  DiceSet d3 = new DiceSet(9, 9);
-	          System.out.println("rolling all die:" + d.rollAll());
-		  System.out.println("rolling fifth die:" + d.rollIndividual(5));
-		  System.out.println("sum of the all die:" + d.sum());
-
-		  DiceSet d4 = new DiceSet(5, 6);
-	          System.out.println("rolling all die:" + d.rollAll());
-		  System.out.println("rolling first die:" + d.rollIndividual(1));
-		  System.out.println("sum of the all die:" + d.sum());
+	          //tested with HighRoll
 	   }	   
 }
