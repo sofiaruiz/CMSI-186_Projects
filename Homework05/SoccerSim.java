@@ -51,7 +51,7 @@ import java.text.DecimalFormat;
        return ballQuant;
 
     }
-    public boolean isMovement() {
+    public boolean isMoving() {
         for (int i = 0 ; i < ballQuant; i++) {
             if (!(balls[i].xVel < 0.000001 && balls[i].yVel < 0.000001)) {
                 return true;
@@ -70,7 +70,7 @@ import java.text.DecimalFormat;
     }
 
      public void isCollision() {
-
+        //xpostion and yposition of ball 1 would be the same as xposition and yposition of ball 2??
      }
 
      public void handleInitialArguments( String args[] ) {
@@ -133,7 +133,7 @@ import java.text.DecimalFormat;
           System.out.println("Pole location : (" + poleX + "," + poleY + ")\n");
 
 
-       while ( ss.isMovement() && ss.isOnField()) {
+       while ( ss.isMoving() && ss.isOnField()) {
          System.out.println(timer.tick());
          System.out.println("progress report :" + timer.toString());
 
