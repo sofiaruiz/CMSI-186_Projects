@@ -49,12 +49,11 @@ public class Timer {
   }
 
   public String toString() {
-    DecimalFormat df = new DecimalFormat("#.000");
-    DecimalFormat dfi = new DecimalFormat("#0");
-    hours = Math.floor( totalSeconds / 3600);
-    minutes = Math.floor((totalSeconds % 3600) / 60);
-    seconds = totalSeconds - ((hours * 3600) + (minutes * 60));
-    return dfi.format(hours) + ":" + dfi.format(minutes) + ":" + df.format(seconds);
+       hours = Math.floor(totalSeconds / 3600);
+       minutes = Math.floor((totalSeconds % 3600) /60);
+       seconds = totalSeconds - ((minutes * 60) + (hours * 3600));
+       DecimalFormat df = new DecimalFormat("#.00");
+       return (int) hours + " : " + (int) minutes + " : " + df.format(seconds);
   }
 
 }
