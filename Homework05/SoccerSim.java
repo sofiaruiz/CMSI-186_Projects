@@ -70,7 +70,12 @@ import java.text.DecimalFormat;
     }
 
      public void isCollision() {
-        //xpostion and yposition of ball 1 would be the same as xposition and yposition of ball 2??
+        double xDiff = xLocation - xLocation2;
+        double yDiff = yLocation - yLocation2;
+        if ((Math.sqrt((Math.pow(xDiff, 2)) + Math.pow(yDiff, 2))) <= 8.9) {
+            return true;
+        }
+        return false;
      }
 
      public void handleInitialArguments( String args[] ) {
