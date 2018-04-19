@@ -47,8 +47,8 @@ public class BrobInt {
    private int    sign          = 0;         // "0" is positive, "1" is negative
    private String reversed      = "";        // the backwards version of the internal String representation
    private int[]  dataArray   = null;      // byte array for storing the string values; uses the reversed string
-   private int[] longerValue    = null;
-   private int[] shorterValue   = null;
+   private int longerValue    = 0;
+   private int shorterValue   = 0;
   /**
    *  Constructor takes a string and assigns it to the internal storage, checks for a sign character
    *   and handles that accordingly;  it then checks to see if it's all valid digits, and reverses it
@@ -119,56 +119,98 @@ public class BrobInt {
 
    public BrobInt addInt( BrobInt gint ) {
        int carry = 0;
-       int[] result = new int[ longerValue.length + 1 ];
        int resultSign = 0;
        String sum = "";
 
-        if ( reversed.length() >= gint.internalValue.length() ) {
-          longerValue = dataArray;
-          shorterValue = gint.dataArray;
-        } else if ( reversed.length() < gint.internalValue.length() ) {
-          longerValue = gint.dataArray;
-          shorterValue = dataArray;
+        if ( reversed.length() >= gint.reversed.length() ) {
+          longerValue = reversed.length();
+          shorterValue = gint.reversed.length();
+        } else if ( reversed.length() < gint.reversed.length() ) {
+          longerValue = gint.reversed.length();
+          shorterValue = reversed.length();
         }
-        if ( sign == 1 && gint.sign == 1 ) {
+        int[] result = new int[ longerValue + 2 ];
+
+       if ( sign == 1 && gint.sign == 1 ) {
           resultSign = 1;
-        }
+       }
 
        if ( sign == gint.sign ) {
-         for ( int i = 0; i < dataArray.length; i++ ) {
-           result[i] = dataArray[i] + gint.dataArray[i] + carry;
-           if ( result[i] > 9 ) {
-             result[i] -= 10;
-             carry = 1;
-           } else {
-             carry = 0;
+         if (reversed.length() >= gint.reversed.length()) {
+           for ( int i = 0; i <= longerValue; i++ ) {
+             if ( i < shorterValue ) {
+               result[i] = dataArray[i] + gint.dataArray[i] + carry;
+               if ( result[i] > 9 ) {
+                 result[i] -= 10;
+                 carry = 1;
+               } else {
+                 carry = 0;
+               }
+             } else if ( i < longerValue) {
+               result[i] = dataArray[i] + carry;
+               if ( result[i] > 9 ) {
+                 result[i] -= 10;
+                 carry = 1;
+               } else {
+                 carry = 0;
+               }
+             } else {
+               result[i] = carry;
+             }
+
+           }
+         } else if (gint.reversed.length() > reversed.length()) {
+           for ( int i = 0; i < longerValue; i++ ) {
+             if ( i < shorterValue ) {
+               result[i] = dataArray[i] + gint.dataArray[i] + carry;
+               if ( result[i] > 9 ) {
+                 result[i] -= 10;
+                 carry = 1;
+               } else {
+                 carry = 0;
+               }
+             } else {
+               result[i] = gint.dataArray[i] + carry;
+               if ( result[i] > 9 ) {
+                 result[i] -= 10;
+                 carry = 1;
+               } else {
+                 carry = 0;
+               }
+             }
            }
          }
        } else if ( sign != gint.sign ) {
          return subtractInt(gint);
        }
+       for (int i = result.length - 1; i >= 0; i-- ) {
+         sum += String.valueOf(result[i]);
+       }
+
+        int j = 0;
+        while ( sum.charAt(j) == '0') {
+          j++;
+        }
+        sum = sum.substring(j, sum.length());
         if (resultSign == 1 ) {
-           sum = "-";
+           sum = "-" + sum;
         }
-        for ( int i = result.length - 1; i >= 0; i-- ) {
-          sum += result[i];
-        }
+
         return new BrobInt(sum);
    }
 
    public BrobInt subtractInt( BrobInt gint ) {
        int borrow = 0;
        int carry = 0;
-       int[] difference = new int[ longerValue.length + 1 ];
+       int[] difference = new int[ longerValue + 1 ];
        int resultSign = 0;
-       String differenceResult = "";
+       String diffValue = "";
 
        if ( reversed.length() >= gint.internalValue.length() ) {
-         longerValue = dataArray;
-         shorterValue = gint.dataArray;
+         longerValue = reversed.length();
+
        } else if ( reversed.length() < gint.reversed.length() ) {
-         longerValue = gint.dataArray;
-         shorterValue = dataArray;
+         longerValue = gint.reversed.length();
        }
 
        if ( sign == 0 && gint.sign == 0 ) {
@@ -196,7 +238,6 @@ public class BrobInt {
          }
        }
 
-
        else if ( sign == 0 && gint.sign == 1 ) {
            return addInt(gint);
        }
@@ -219,14 +260,13 @@ public class BrobInt {
          }
        }
 
-
        if (resultSign == 1 ) {
-          differenceResult = "-";
+          diffValue = "-";
        }
        for ( int i = difference.length - 1; i >= 0; i-- ) {
-         differenceResult += difference[i];
+         diffValue += difference[i];
        }
-       return new BrobInt(differenceResult);
+       return new BrobInt(diffValue);
    }
 
   /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -255,38 +295,7 @@ public class BrobInt {
    *  @return BrobInt that is the dividend of this BrobInt divided by the one passed in
    *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
    public BrobInt divide( BrobInt gint ) {
-   int n = 0;
-   int currDiv = 0;
-   int quotient = 0;
-   if ( gint == 0 ){
-       throw new IllegalArgumentException();
-   }
-   if (gint == this ){
-       return 1;
-   }
-   if ( gint > this ){
-       return 0;
-   } else {
-       n = gint.length();
-       currDiv = Integer.parseInt(gint.toString().substring(0, n));
-       if (gint > currDiv){
-           currDiv = Integer.parseInt(gint.toString().substring(0, n+1));
-       }
-       while ( n <= this.toString().length() ) {
-           while ( currDiv > gint) {
-               currDiv = gint.subtractInt(currDiv);
-               quotient++;
-               if (n+1 == d1.toSttring.lenght()){
-                   break;
-               }
-           }
-           currDiv = currDiv.multiply( BrobInt.TEN );
-           quotient = quotient.multiply( BrobInt.TEN );
-           currDiv = currDiv + Integer.parseInt(gint.toString().substring(n-1, n));
-           break;
-       }
-       return new BrobInt(quotient.toString());
-
+       throw new UnsupportedOperationException( "\n         Sorry, that operation is not yet implemented." );
    }
 
   /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
