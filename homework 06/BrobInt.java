@@ -1,24 +1,3 @@
-/** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * File name  :  BrobInt.java
- * Purpose    :  Learning exercise to implement arbitrarily large numbers and their operations
- * @author    :  B.J. Johnson
- * Date       :  2017-04-04
- * Description:  @see <a href='http://bjohnson.lmu.build/cmsi186web/homework06.html'>Assignment Page</a>
- * Notes      :  None
- * Warnings   :  None
- *
- *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * Revision History
- * ================
- *   Ver      Date     Modified by:  Reason for change or modification
- *  -----  ----------  ------------  ---------------------------------------------------------------------
- *  1.0.0  2017-04-04  B.J. Johnson  Initial writing and begin coding
- *  1.1.0  2017-04-13  B.J. Johnson  Completed addByt, addInt, compareTo, equals, toString, Constructor,
- *                                     validateDigits, two reversers, and valueOf methods; revamped equals
- *                                     and compareTo methods to use the Java String methods; ready to
- *                                     start work on subtractByte and subtractInt methods
- *
- *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 import java.util.Arrays;
 
 public class BrobInt {
@@ -116,7 +95,11 @@ public class BrobInt {
        return new BrobInt(new String( output ));
    }
 
-
+   /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  *  Method to add the value of a BrobIntk passed as argument to this BrobInt using int array
+  *  @param  gint         BrobInt to add to this
+  *  @return BrobInt that is the sum of the value of this BrobInt and the one passed in
+  *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
    public BrobInt addInt( BrobInt gint ) {
        int carry = 0;
        int resultSign = 0;
@@ -199,6 +182,11 @@ public class BrobInt {
         return new BrobInt(sum);
    }
 
+   /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   *  Method to subtract the value of a BrobIntk passed as argument to this BrobInt using bytes
+   *  @param  gint         BrobInt to subtract from this
+   *  @return BrobInt that is the difference of the value of this BrobInt and the one passed in
+   *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
    public BrobInt subtractInt( BrobInt gint ) {
        int borrow = 0;
        int carry = 0;
@@ -368,4 +356,3 @@ public class BrobInt {
       System.exit( 0 );
    }
 }
-
