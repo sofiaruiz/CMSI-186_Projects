@@ -47,7 +47,8 @@ public class BrobInt {
    private int    sign          = 0;         // "0" is positive, "1" is negative
    private String reversed      = "";        // the backwards version of the internal String representation
    private int[]  dataArray   = null;      // byte array for storing the string values; uses the reversed string
-
+   private int[] longerValue    = null;
+   private int[] shorterValue   = null;
   /**
    *  Constructor takes a string and assigns it to the internal storage, checks for a sign character
    *   and handles that accordingly;  it then checks to see if it's all valid digits, and reverses it
@@ -56,30 +57,15 @@ public class BrobInt {
    */
    public BrobInt( String val ) {
        String value = val.trim();
-
-       if (value.charAt(0) == '+') {
-           this.sign = 0;
-           value = value.substring(0);
-       } else {
-           if(value.charAt(0) == '-')
-           this.sign = 1;
-           value = value.substring(1);
+       internalValue = value;
+       reversed = new StringBuffer(internalValue).reverse().toString();
+       if ( reversed.charAt( internalValue.length() - 1) == '-' ) {
+         sign = 1;
+         reversed = reversed.substring(0, reversed.length() - 1 );
        }
-
-       while (value.charAt(0) == '0' && value.length() > 1) {
-           value = value.substring(1);
-       }
-
-       if(value.charAt(0) == '0') {
-           this.sign = 0;
-       }
-
-       dataArray = new int[value.length()];
-       for (int i = value.length() - 1; i >= 0; i--) {
-           if (value.charAt(i) < '0' || value.charAt(i) > '9') {
-               throw new IllegalArgumentException();
-           }
-           dataArray[value.length() - 1 - i] = Character.getNumericValue(value.charAt(i));
+       dataArray = new int[reversed.length()];
+       for ( int i = 0; i < reversed.length(); i++ ) {
+         dataArray[i] = Integer.parseInt( "" + reversed.charAt(i) );
        }
    }
 
@@ -131,117 +117,116 @@ public class BrobInt {
    }
 
 
-   public BrobInt addInt( BrobInt val ) {
-       String sum = "";
+   public BrobInt addInt( BrobInt gint ) {
        int carry = 0;
+       int[] result = new int[ longerValue.length + 1 ];
+       int resultSign = 0;
+       String sum = "";
 
-       if (this.dataArray.length > val.dataArray.length) {
-           val.padded(this);
-       } else if (val.dataArray.length > this.dataArray.length) {
-           this.padded(val);
-       }
+        if ( reversed.length() >= gint.internalValue.length() ) {
+          longerValue = dataArray;
+          shorterValue = gint.dataArray;
+        } else if ( reversed.length() < gint.internalValue.length() ) {
+          longerValue = gint.dataArray;
+          shorterValue = dataArray;
+        }
+        if ( sign == 1 && gint.sign == 1 ) {
+          resultSign = 1;
+        }
 
-       if (this.sign == 1 && val.sign == 0) {
-           this.sign = 0;
-           if (this.equals(val)) {
-               return val.subtractInt(this);
-           }
-           if (this.greaterThan(val)) {
-               return val.subtractInt(this);
-           }
-           if (val.greaterThan(this)) {
-               return val.subtractInt(this);
-           }
-       }
-       if (this.sign == 0 && val.sign == 1) {
-           val.sign = 0;
-           if (this.equals(val)) {
-               return val.subtractInt(this);
-           }
-           if (val.greaterThan(this)) {
-               return this.subtractInt(val);
-           }
-           if (this.greaterThan(val)) {
-               return this.subtractInt(val);
-           }
-       }
-
-       for (int i = 0; i < this.dataArray.length; i++) {
-           this.dataArray[i] = (this.dataArray[i] + val.dataArray[i] + carry);
-           if (this.dataArray[i] > 9) {
-               carry = 1;
-               this.dataArray[i] = (this.dataArray[i]) % 10;
+       if ( sign == gint.sign ) {
+         for ( int i = 0; i < dataArray.length; i++ ) {
+           result[i] = dataArray[i] + gint.dataArray[i] + carry;
+           if ( result[i] > 9 ) {
+             result[i] -= 10;
+             carry = 1;
            } else {
-               carry = 0;
+             carry = 0;
            }
-           sum = this.dataArray[i] + sum;
+         }
+       } else if ( sign != gint.sign ) {
+         return subtractInt(gint);
        }
-       if (carry > 0) {
-           sum = carry + sum;
-       }
-       if (this.sign == 1 && val.sign == 1) {
-           sum = "-" + sum;
-       }
-       return new BrobInt(sum);
+        if (resultSign == 1 ) {
+           sum = "-";
+        }
+        for ( int i = result.length - 1; i >= 0; i-- ) {
+          sum += result[i];
+        }
+        return new BrobInt(sum);
    }
 
-   public BrobInt subtractInt( BrobInt val ) {
-       String difference = "";
-         int carry = 0;
-         int helper = 0;
+   public BrobInt subtractInt( BrobInt gint ) {
+       int borrow = 0;
+       int carry = 0;
+       int[] difference = new int[ longerValue.length + 1 ];
+       int resultSign = 0;
+       String differenceResult = "";
 
-         if (this.dataArray.length > val.dataArray.length) {
-             val.padded(this);
-         } else if (val.dataArray.length > this.dataArray.length) {
-             this.padded(val);
-         }
+       if ( reversed.length() >= gint.internalValue.length() ) {
+         longerValue = dataArray;
+         shorterValue = gint.dataArray;
+       } else if ( reversed.length() < gint.reversed.length() ) {
+         longerValue = gint.dataArray;
+         shorterValue = dataArray;
+       }
 
-         if (this.sign == 1 && val.sign == 1) {
-             this.sign = 0;
-             val.sign = 0;
-             if (this.greaterThan(val)) {
-                 return this.subtractInt(val);
+       if ( sign == 0 && gint.sign == 0 ) {
+         if ( reversed.length() > gint.reversed.length() ) {
+           for ( int i = 0; i <= reversed.length() - 1; i++ ) {
+             difference[i] = dataArray[i] - gint.dataArray[i] + borrow;
+             if ( gint.dataArray[i] > dataArray[i]) {
+               difference[i+1] -= 1;
+               borrow = 10;
              } else {
-                 return val.subtractInt(this);
+               borrow = 0;
              }
-         }
-
-         if (this.sign == 0 && val.sign == 1) {
-             val.sign = 0;
-             return this.addInt(val);
-         }
-
-         if (this.sign == 1 && val.sign == 0) {
-             val.sign = 1;
-             return this.addInt(val);
-         }
-
-         if ( val.greaterThan(this) || (this.sign == 1 && val.sign == 0)) {
-             for (int i = 0; i < this.dataArray.length; i++) {
-                 val.dataArray[i] = (val.dataArray[i] - this.dataArray[i] + carry);
-                 if (val.dataArray[i] < 0) {
-                     carry = -1;
-                     helper = 10;
-                     val.dataArray[i] = helper + val.dataArray[i] - this.dataArray[i];
-                 }
-                 difference = val.dataArray[i] + difference;
+           } resultSign = 0;
+         } else if ( reversed.length() < gint.reversed.length()) {
+           for ( int i = 0; i <= gint.reversed.length() - 1; i++ ) {
+             difference[i] = gint.dataArray[i] - dataArray[i] + borrow;
+             if ( gint.dataArray[i] < dataArray[i]) {
+               difference[i+1] -= 1;
+               borrow = 10;
+             } else {
+               borrow = 0;
              }
-             difference = "-" + difference;
-         } else {
-             for (int i = 0; i < this.dataArray.length; i++) {
-                 this.dataArray[i] = (this.dataArray[i] - val.dataArray[i] + carry);
-                 if (this.dataArray[i] < 0) {
-                     carry = -1;
-                     helper = 10;
-                     this.dataArray[i] = helper + this.dataArray[i] - val.dataArray[i];
-                 }
-                 difference = this.dataArray[i] + difference;
+           }
+           resultSign = 1;
+         }
+       }
+
+
+       else if ( sign == 0 && gint.sign == 1 ) {
+           return addInt(gint);
+       }
+       else if ( sign == 1 && gint.sign == 0 ) {
+         if ( reversed.length() > gint.reversed.length() ) {
+
+         }
+       }
+       else if (sign == 1 && gint.sign == 1 ) {
+         if ( reversed.length() > gint.reversed.length() ) {
+           for ( int i = 0; i <= reversed.length() - 1; i++ ) {
+             difference[i] = dataArray[i] - gint.dataArray[i] + borrow;
+             if ( gint.dataArray[i] > dataArray[i]) {
+               difference[i+1] -= 1;
+               borrow = 10;
+             } else {
+               borrow = 0;
              }
+           } resultSign = 1;
          }
-         if (helper > 0) {
-             difference = helper + difference;
-         }
-         return new BrobInt(difference);
+       }
+
+
+       if (resultSign == 1 ) {
+          differenceResult = "-";
+       }
+       for ( int i = difference.length - 1; i >= 0; i-- ) {
+         differenceResult += difference[i];
+       }
+       return new BrobInt(differenceResult);
    }
 
   /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -270,7 +255,38 @@ public class BrobInt {
    *  @return BrobInt that is the dividend of this BrobInt divided by the one passed in
    *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
    public BrobInt divide( BrobInt gint ) {
-      throw new UnsupportedOperationException( "\n         Sorry, that operation is not yet implemented." );
+   int n = 0;
+   int currDiv = 0;
+   int quotient = 0;
+   if ( gint == 0 ){
+       throw new IllegalArgumentException();
+   }
+   if (gint == this ){
+       return 1;
+   }
+   if ( gint > this ){
+       return 0;
+   } else {
+       n = gint.length();
+       currDiv = Integer.parseInt(gint.toString().substring(0, n));
+       if (gint > currDiv){
+           currDiv = Integer.parseInt(gint.toString().substring(0, n+1));
+       }
+       while ( n <= this.toString().length() ) {
+           while ( currDiv > gint) {
+               currDiv = gint.subtractInt(currDiv);
+               quotient++;
+               if (n+1 == d1.toSttring.lenght()){
+                   break;
+               }
+           }
+           currDiv = currDiv.multiply( BrobInt.TEN );
+           quotient = quotient.multiply( BrobInt.TEN );
+           currDiv = currDiv + Integer.parseInt(gint.toString().substring(n-1, n));
+           break;
+       }
+       return new BrobInt(quotient.toString());
+
    }
 
   /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -320,37 +336,6 @@ public class BrobInt {
       return gi;
    }
 
-   /**
-   * some of my own helper methods
-   */
-   public void padded (BrobInt makeLength) {
-       int[] newLength = new int[makeLength.dataArray.length];
-
-       for (int i = 0; i < this.dataArray.length; i++) {
-           newLength[i] = this.dataArray[i];
-       }
-       this.dataArray = newLength;
-   }
-
-   public boolean greaterThan( BrobInt gint ){
-       if (this.sign == 1 && gint.sign == -1) {
-           return true;
-       } else if (this.sign == -1 && gint.sign == 1) {
-           return false;
-       } else if (this.toString().length() > gint.toString().length()) {
-           return true;
-       } else {
-           for (int i = 0; i < this.toString().length(); i++) {
-               if (this.toString().charAt(i) > gint.toString().charAt(i)) {
-                   return true;
-               } else {
-                   return false;
-               }
-           }
-       } return false;
-   }
-
-
    public String toString() {
       return internalValue;
    }
@@ -374,3 +359,4 @@ public class BrobInt {
       System.exit( 0 );
    }
 }
+
