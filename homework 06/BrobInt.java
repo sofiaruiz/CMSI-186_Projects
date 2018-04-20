@@ -303,8 +303,31 @@ public class BrobInt {
             }
         }
        else if (sign == 1 && gint.sign == 1 ) {
-           resultSign = 1;
-         return addInt(gint);
+           BrobInt this2 = new BrobInt(this.toString().substring(1));
+           BrobInt gint2 = new BrobInt(gint.toString().substring(1));
+
+           if ( this2.reversed.length() > gint2.internalValue.length() ) {
+             for ( int i = 0; i <= gint2.internalValue.length() - 1; i++ ) {
+               difference[i] = dataArray[i] - gint2.dataArray[i] + borrow;
+               if ( gint2.dataArray[i] > dataArray[i]) {
+                 difference[i+1] -= 1;
+                 borrow = 10;
+               } else {
+                 borrow = 0;
+               }
+             } resultSign = 0;
+         } else if ( this2.reversed.length() < gint2.internalValue.length()) {
+             for ( int i = 0; i <= this2.internalValue.length() - 1; i++ ) {
+               difference[i] = gint2.dataArray[i] - dataArray[i] + borrow;
+               if ( gint2.dataArray[i] < dataArray[i]) {
+                 difference[i+1] -= 1;
+                 borrow = 10;
+               } else {
+                 borrow = 0;
+               }
+             }
+             resultSign = 1;
+           }
        }
 
        if (resultSign == 1 ) {
