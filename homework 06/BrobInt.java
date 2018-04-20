@@ -1,3 +1,24 @@
+/** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * File name  :  BrobInt.java
+ * Purpose    :  Learning exercise to implement arbitrarily large numbers and their operations
+ * @author    :  B.J. Johnson
+ * Date       :  2017-04-04
+ * Description:  @see <a href='http://bjohnson.lmu.build/cmsi186web/homework06.html'>Assignment Page</a>
+ * Notes      :  None
+ * Warnings   :  None
+ *
+ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * Revision History
+ * ================
+ *   Ver      Date     Modified by:  Reason for change or modification
+ *  -----  ----------  ------------  ---------------------------------------------------------------------
+ *  1.0.0  2017-04-04  B.J. Johnson  Initial writing and begin coding
+ *  1.1.0  2017-04-13  B.J. Johnson  Completed addByt, addInt, compareTo, equals, toString, Constructor,
+ *                                     validateDigits, two reversers, and valueOf methods; revamped equals
+ *                                     and compareTo methods to use the Java String methods; ready to
+ *                                     start work on subtractByte and subtractInt methods
+ *
+ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 import java.util.Arrays;
 
 public class BrobInt {
@@ -202,8 +223,8 @@ public class BrobInt {
        }
 
        if ( sign == 0 && gint.sign == 0 ) {
-         if ( reversed.length() > gint.reversed.length() ) {
-           for ( int i = 0; i <= reversed.length() - 1; i++ ) {
+         if ( reversed.length() > gint.internalValue.length() ) {
+           for ( int i = 0; i <= gint.internalValue.length() - 1; i++ ) {
              difference[i] = dataArray[i] - gint.dataArray[i] + borrow;
              if ( gint.dataArray[i] > dataArray[i]) {
                difference[i+1] -= 1;
@@ -212,8 +233,8 @@ public class BrobInt {
                borrow = 0;
              }
            } resultSign = 0;
-         } else if ( reversed.length() < gint.reversed.length()) {
-           for ( int i = 0; i <= gint.reversed.length() - 1; i++ ) {
+       } else if ( reversed.length() < gint.internalValue.length()) {
+           for ( int i = 0; i <= reversed.length() - 1; i++ ) {
              difference[i] = gint.dataArray[i] - dataArray[i] + borrow;
              if ( gint.dataArray[i] < dataArray[i]) {
                difference[i+1] -= 1;
@@ -227,25 +248,63 @@ public class BrobInt {
        }
 
        else if ( sign == 0 && gint.sign == 1 ) {
+           resultSign = 1;
            return addInt(gint);
        }
        else if ( sign == 1 && gint.sign == 0 ) {
-         if ( reversed.length() > gint.reversed.length() ) {
+           BrobInt this2 = new BrobInt(this.toString().substring(1));
+           BrobInt gint2 = new BrobInt(gint.toString().substring(1));
 
-         }
-       }
-       else if (sign == 1 && gint.sign == 1 ) {
-         if ( reversed.length() > gint.reversed.length() ) {
-           for ( int i = 0; i <= reversed.length() - 1; i++ ) {
-             difference[i] = dataArray[i] - gint.dataArray[i] + borrow;
-             if ( gint.dataArray[i] > dataArray[i]) {
-               difference[i+1] -= 1;
-               borrow = 10;
-             } else {
-               borrow = 0;
+           int[] result = new int[ longerValue + 2 ];
+
+           if (this2.reversed.length() >= gint2.reversed.length()) {
+             for ( int i = 0; i <= longerValue; i++ ) {
+               if ( i < shorterValue ) {
+                 result[i] = dataArray[i] + gint2.dataArray[i] + carry;
+                 if ( result[i] > 9 ) {
+                   result[i] -= 10;
+                   carry = 1;
+                 } else {
+                   carry = 0;
+                 }
+               } else if ( i < longerValue) {
+                 result[i] = dataArray[i] + carry;
+                 if ( result[i] > 9 ) {
+                   result[i] -= 10;
+                   carry = 1;
+                 } else {
+                   carry = 0;
+                 }
+               } else {
+                 result[i] = carry;
+               }
+
              }
-           } resultSign = 1;
-         }
+         } else if (gint2.reversed.length() > this2.reversed.length()) {
+             for ( int i = 0; i < longerValue; i++ ) {
+               if ( i < shorterValue ) {
+                 result[i] = dataArray[i] + gint2.dataArray[i] + carry;
+                 if ( result[i] > 9 ) {
+                   result[i] -= 10;
+                   carry = 1;
+                 } else {
+                   carry = 0;
+                 }
+               } else {
+                 result[i] = gint2.dataArray[i] + carry;
+                 if ( result[i] > 9 ) {
+                   result[i] -= 10;
+                   carry = 1;
+                 } else {
+                   carry = 0;
+                 }
+               }
+             }
+            }
+        }
+       else if (sign == 1 && gint.sign == 1 ) {
+           resultSign = 1;
+         return addInt(gint);
        }
 
        if (resultSign == 1 ) {
