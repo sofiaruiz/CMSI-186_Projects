@@ -185,7 +185,9 @@ public class BrobInt {
            }
          }
        } else if ( sign != gint.sign ) {
-         return subtractInt(gint);
+         if (gint.reversed.length() > reversed.length()){
+
+         }
        }
        for (int i = result.length - 1; i >= 0; i-- ) {
          sum += String.valueOf(result[i]);
@@ -248,52 +250,94 @@ public class BrobInt {
        }
 
        else if ( sign == 0 && gint.sign == 1 ) {
-           resultSign = 1;
-           return addInt(gint);
-       }
-       else if ( sign == 1 && gint.sign == 0 ) {
-           BrobInt this2 = new BrobInt(this.toString().substring(1));
            BrobInt gint2 = new BrobInt(gint.toString().substring(1));
 
-           int[] result = new int[ longerValue + 2 ];
-
-           if (this2.reversed.length() >= gint2.reversed.length()) {
+           if (reversed.length() >= gint2.reversed.length()) {
              for ( int i = 0; i <= longerValue; i++ ) {
                if ( i < shorterValue ) {
-                 result[i] = dataArray[i] + gint2.dataArray[i] + carry;
-                 if ( result[i] > 9 ) {
-                   result[i] -= 10;
+                 difference[i] = dataArray[i] + gint2.dataArray[i] + carry;
+                 if ( difference[i] > 9 ) {
+                   difference[i] -= 10;
                    carry = 1;
                  } else {
                    carry = 0;
                  }
                } else if ( i < longerValue) {
-                 result[i] = dataArray[i] + carry;
-                 if ( result[i] > 9 ) {
-                   result[i] -= 10;
+                 difference[i] = dataArray[i] + carry;
+                 if ( difference[i] > 9 ) {
+                   difference[i] -= 10;
                    carry = 1;
                  } else {
                    carry = 0;
                  }
                } else {
-                 result[i] = carry;
+                 difference[i] = carry;
+               }
+
+             }
+         } else if (gint2.reversed.length() > reversed.length()) {
+             for ( int i = 0; i < longerValue; i++ ) {
+               if ( i < shorterValue ) {
+                 difference[i] = dataArray[i] + gint2.dataArray[i] + carry;
+                 if ( difference[i] > 9 ) {
+                   difference[i] -= 10;
+                   carry = 1;
+                 } else {
+                   carry = 0;
+                 }
+               } else {
+                 difference[i] = gint2.dataArray[i] + carry;
+                 if ( difference[i] > 9 ) {
+                   difference[i] -= 10;
+                   carry = 1;
+                 } else {
+                   carry = 0;
+                 }
+               }
+             }
+           }
+       }
+       else if ( sign == 1 && gint.sign == 0 ) {
+           BrobInt this2 = new BrobInt(this.toString().substring(1));
+           BrobInt gint2 = new BrobInt(gint.toString().substring(1));
+
+           if (this2.reversed.length() >= gint2.reversed.length()) {
+             for ( int i = 0; i <= longerValue; i++ ) {
+               if ( i < shorterValue ) {
+                 difference[i] = dataArray[i] + gint2.dataArray[i] + carry;
+                 if ( difference[i] > 9 ) {
+                   difference[i] -= 10;
+                   carry = 1;
+                 } else {
+                   carry = 0;
+                 }
+               } else if ( i < longerValue) {
+                 difference[i] = dataArray[i] + carry;
+                 if ( difference[i] > 9 ) {
+                   difference[i] -= 10;
+                   carry = 1;
+                 } else {
+                   carry = 0;
+                 }
+               } else {
+                 difference[i] = carry;
                }
 
              }
          } else if (gint2.reversed.length() > this2.reversed.length()) {
              for ( int i = 0; i < longerValue; i++ ) {
                if ( i < shorterValue ) {
-                 result[i] = dataArray[i] + gint2.dataArray[i] + carry;
-                 if ( result[i] > 9 ) {
-                   result[i] -= 10;
+                 difference[i] = dataArray[i] + gint2.dataArray[i] + carry;
+                 if ( difference[i] > 9 ) {
+                   difference[i] -= 10;
                    carry = 1;
                  } else {
                    carry = 0;
                  }
                } else {
-                 result[i] = gint2.dataArray[i] + carry;
-                 if ( result[i] > 9 ) {
-                   result[i] -= 10;
+                 difference[i] = gint2.dataArray[i] + carry;
+                 if ( difference[i] > 9 ) {
+                   difference[i] -= 10;
                    carry = 1;
                  } else {
                    carry = 0;
@@ -438,3 +482,4 @@ public class BrobInt {
       System.exit( 0 );
    }
 }
+
