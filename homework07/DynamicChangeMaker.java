@@ -95,11 +95,11 @@ public class DynamicChangeMaker{
     }
 
     /**
-        *  main method calls DynamicChangeMaker program from the command line.
-        * @param args arguments passed in from the command line.
-        * Last arg is the value of change you are trying to.
-        * The other args are the coins you want to find an optimal solution for.
-        */
+     *  main method calls DynamicChangeMaker program from the command line.
+     * @param args arguments passed in from the command line.
+     * Last arg is the value of change you are trying to.
+     * The other args are the coins you want to find an optimal solution for.
+     */
 
     public static void main(String args[]){
         if ( args.length >= 2 ){
@@ -107,7 +107,7 @@ public class DynamicChangeMaker{
          for ( int i = 0; i < args.length - 1; i++ ){
             denominations[i] = Integer.parseInt(args[i]);
          }
-         System.out.println( "Minimum coins required is " + makeChangeWithDynamicProgramming(denominations, Integer.parseInt(args[args.length - 1]) ));
+         System.out.println(makeChangeWithDynamicProgramming(denominations, Integer.parseInt(args[args.length - 1]) ));
       } else {
          System.out.println( "\n   Sorry, the arguments you entered are invalid." );
          System.out.println( "   The first argument must be an integer array of arguments with a value greater than or equal to 0\n" );
